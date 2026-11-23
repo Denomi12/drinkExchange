@@ -62,3 +62,41 @@ jobs:
         with:
           name: frontend
           path: frontend/dist
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: drinkexchange
+          POSTGRES_PASSWORD: drinkexchange
+          POSTGRES_DB: drinkexchange_test
+        ports:
+          - 5434:5432
+        options: --health-cmd "pg_isready -U drinkexchange"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Test backend
+        working-directory: backend
+        run: |
+          npm ci
+          npm test -- --coverage
+
+      - name: Test frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm test -- --coverage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            backend/coverage
+            frontend/coverage
