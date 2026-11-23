@@ -56,7 +56,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: backend
-          path: backend/dist
+          path: |
+            backend/dist
+            backend/prisma
+            backend/package.json
+            backend/package-lock.json
+            backend/Dockerfile
 
       - uses: actions/upload-artifact@v4
         with:
@@ -100,3 +105,39 @@ jobs:
           path: |
             backend/coverage
             frontend/coverage
+
+  deploy:
+    needs: [lint, build, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend
+          path: backend
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend
+          path: frontend
+
+      - name: Deploy backend (Railway)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: npx @railway/cli up backend --path-as-root --service backend --ci
+
+      - name: Deploy frontend (Vercel)
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          cat > frontend/vercel.json <<EOF
+          {
+            "rewrites": [
+              { "source": "/api/(.*)", "destination": "${{ vars.BACKEND_URL }}/api/\$1" },
+              { "source": "/(.*)", "destination": "/index.html" }
+            ]
+          }
+          EOF
+          npx vercel deploy frontend --prod --yes --token ${{ secrets.VERCEL_TOKEN }}
