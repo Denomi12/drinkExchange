@@ -2,7 +2,7 @@
 
 [![CI/CD](https://github.com/Denomi12/drinkExchange/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/Denomi12/drinkExchange/actions/workflows/ci-cd.yml)
 
-**Nameščena aplikacija:** [https://TODO-URL.vercel.app](https://drink-exchange-pi.vercel.app/)
+**Nameščena aplikacija:** [https://drink-exchange-pi.vercel.app/](https://drink-exchange-pi.vercel.app/)
 
 DrinkExchange je spletna aplikacija za bar, v katerem se cene pijač spreminjajo glede na povpraševanje, podobno kot borzni tečaji. Gostje na javnem ceniku spremljajo trenutne cene, trend in zgodovino cen, natakarji evidentirajo naročila po trenutno veljavni (zaklenjeni) ceni, upravitelj pa določa ponudbo in dovoljeni cenovni razpon. Cena pijače se zviša takoj ob vsakem zaključenem naročilu, brez prodaje pa se postopoma ohlaja nazaj proti osnovni ceni in počasi pod njo, vedno znotraj dovoljenega razpona.
 
